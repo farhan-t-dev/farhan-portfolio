@@ -63,7 +63,13 @@ export function WorkIndex({ items, total }: WorkIndexProps) {
                 data-reveal
                 onMouseEnter={() => setActiveIndex(index)}
                 onFocus={() => setActiveIndex(index)}
-                className="group relative border-b border-line transition-colors hover:bg-mist/40"
+                className={cn(
+                  "group relative border-b border-line transition-colors hover:bg-mist/40",
+                  // Only the first three featured entries show on mobile;
+                  // the rest wait for the "All projects" door. Desktop
+                  // keeps the full list beside the plate.
+                  index >= 3 ? "hidden lg:block" : "",
+                )}
               >
                 <div className="grid grid-cols-[minmax(0,1fr)_6.5rem] items-start gap-x-5 py-5 md:py-6 lg:grid-cols-1 lg:gap-x-0">
                   <div className="min-w-0">

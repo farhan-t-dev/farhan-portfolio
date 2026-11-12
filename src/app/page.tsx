@@ -7,6 +7,7 @@ import { Stack } from "@/components/sections/stack";
 import { Work } from "@/components/sections/work";
 import { About } from "@/components/sections/about";
 import { Contact } from "@/components/sections/contact";
+import { BackToTop } from "@/components/ui/back-to-top";
 
 /**
  * Homepage — sections are server components; a few small client islands
@@ -33,15 +34,19 @@ export default function Home() {
       }}
       default="none"
     >
-      <>
-        <Hero />
-        <Work />
-        <Services />
-        <Process />
-        <Stack />
-        <About />
-        <Contact />
-      </>
+      <div className="flex flex-col">
+        {/* Mobile pitch order: hero -> process (the differentiator) -> work ->
+            services -> stack -> about -> contact. Desktop keeps proof first:
+            hero -> work -> services -> process -> stack -> about -> contact. */}
+        <div className="order-1 lg:order-1"><Hero /></div>
+        <div className="order-2 lg:order-4"><Process /></div>
+        <div className="order-3 lg:order-2"><Work /></div>
+        <div className="order-4 lg:order-3"><Services /></div>
+        <div className="order-5"><Stack /></div>
+        <div className="order-6"><About /></div>
+        <div className="order-7"><Contact /></div>
+        <BackToTop />
+      </div>
     </ViewTransition>
   );
 }

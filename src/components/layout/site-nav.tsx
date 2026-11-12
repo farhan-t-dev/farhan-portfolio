@@ -86,6 +86,11 @@ export function SiteNav() {
 
   return (
     <>
+      {/* Work stays on every width: it is also a route (/work) with no other
+          entry point, so it must be reachable from mobile too. The other
+          section anchors (Services, Process, About) only point at spans of
+          the homepage, which a thumb reaches by scrolling — they hide below
+          md to keep the mobile row to Work + Contact. */}
       {workLink && (
         <Link
           href={workLink.href}
