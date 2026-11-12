@@ -27,9 +27,15 @@ type SectionProps = {
  * Contact band it mirrors).
  *
  * Asymmetric Swiss grid, per the approved brief:
- *   desktop — label in cols 1–2, content in cols 3–12
- *   tablet  — label in cols 1–4, content in cols 5–12
- *   mobile  — label stacks above content
+ *   tablet and desktop — label in cols 1–2, content in cols 3–12
+ *   mobile             — label stacks above content
+ *
+ * The rail is 2 columns from md up, not 4: /work and the project notes
+ * already park their labels in 2 columns, and at 768 the 4-column rail
+ * pushed homepage content 117px further right than the same content
+ * starts on those pages. One rail width keeps the document's content
+ * edge continuous across routes, and hands tablet prose the 560px column
+ * it was previously denied.
  *
  * Extracted because six sections repeat this identical structure — one
  * clear responsibility (grid placement + band treatment + heading),
@@ -46,11 +52,16 @@ export function Section({
 
   const heading = (
     <h2
+      data-reveal
       className={cn(
-        "text-sm font-medium",
+        "flex items-center gap-2.5 text-sm font-medium",
         dark ? "text-mist/70" : "text-slate",
       )}
     >
+      <span
+        aria-hidden="true"
+        className="section-marker size-1.5 shrink-0 bg-signal"
+      />
       {label}
     </h2>
   );
@@ -58,7 +69,9 @@ export function Section({
   return (
     <section
       id={id}
+      data-section={id}
       className={cn(
+        "relative",
         // Hairline separates bands; the inverted band is separated by
         // colour contrast alone, so no rule is needed there.
         !dark && "border-t border-line",
@@ -73,8 +86,8 @@ export function Section({
           pad,
         )}
       >
-        <div className="md:col-span-4 lg:col-span-2">{heading}</div>
-        <div className="md:col-span-8 lg:col-span-10">{children}</div>
+        <div className="md:col-span-2">{heading}</div>
+        <div className="md:col-span-10">{children}</div>
       </div>
     </section>
   );

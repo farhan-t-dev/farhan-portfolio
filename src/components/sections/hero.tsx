@@ -1,52 +1,96 @@
+import type { CSSProperties } from "react";
+
 import { site } from "@/data/site";
 import { Availability } from "@/components/ui/availability";
+import { ArrowDown } from "@/components/ui/icons";
 
 /**
- * Hero — the poster moment. The single orchestrated entrance on the page
- * (one CSS animation on the headline, collapsed to instant under
- * prefers-reduced-motion by the global rule in globals.css).
+ * Hero — the poster moment, and the one orchestrated entrance on the site.
+ *
+ * The headline is split into words on the server so the CSS can stagger
+ * them without a client component. The words rise into place; the red
+ * rule beside the introduction draws down; the meta row follows. All of
+ * it is inert until the document's `data-motion` flag is set, so the
+ * reduced-motion and no-script versions are simply the finished page.
  *
  * Positioning covers both new development and existing-app work; the
- * headline is distinctive without being rescue-only. Server component.
+ * headline is distinctive without being rescue-only.
  *
  * The clamp floor is 2.25rem, not 2.75rem: "applications," is the widest
  * unbreakable word in the headline, and at 2.75rem it painted about 37px
- * past the 265px content column at a 320px viewport, which was the last
- * source of horizontal page scroll at that width. 2.25rem lets the word
- * sit inside the column down to 320 without hyphenating a display line.
+ * past the 265px content column at a 320px viewport. 2.25rem lets the
+ * word sit inside the column down to 320 without hyphenating a display
+ * line.
  */
 export function Hero() {
+  const words = site.tagline.split(" ");
+
   return (
     <section className="shell gutter pt-14 pb-16 md:pt-20 md:pb-20 lg:pt-28 lg:pb-24">
       <div className="grid grid-cols-1 gap-x-6 gap-y-8 md:grid-cols-12">
-        <h1 className="font-display animate-hero-in text-[clamp(2.25rem,7.5vw,6.25rem)] text-balance md:col-span-11">
-          {site.tagline}
+        <h1 className="font-display text-[clamp(2.25rem,7.5vw,6.25rem)] text-balance md:col-span-11">
+          {words.map((word, index) => (
+            <span key={`${word}-${index}`}>
+              <span className="inline-block">
+                <span
+                  className="hero-word inline-block"
+                  style={{ "--word-index": index } as CSSProperties}
+                >
+                  {word}
+                </span>
+              </span>
+              {index < words.length - 1 ? " " : null}
+            </span>
+          ))}
         </h1>
 
-        <p className="max-w-[62ch] font-serif text-lg leading-relaxed text-slate md:col-span-7 md:text-xl">
-          Full-stack development, AI, server setup, and migrations for founders,
-          agencies, and teams: new features, integrations, debugging, and
-          deployment — whether we&apos;re starting from an empty repository, an
-          existing codebase, or a live production system.
-        </p>
+        {/* The measure lives on the paragraph, in the serif it is set in.
+            It used to sit on this wrapper, where `ch` resolved against the
+            inherited sans — so a 62ch cap meant a much narrower serif
+            column, and "system." orphaned on a fifth line at every desktop
+            width. Eight columns with a 58ch serif measure sets the same
+            copy in four full lines. */}
+        <div className="relative pl-5 md:col-span-8 md:pl-6">
+          <span
+            aria-hidden="true"
+            className="hero-rule-y absolute left-0 top-0 h-full w-px bg-signal"
+          />
+          <p className="hero-copy max-w-[58ch] font-serif text-lg leading-relaxed text-pretty text-slate md:text-xl">
+            Full-stack development, AI, server setup, and migrations for
+            founders, agencies, and teams: new features, integrations,
+            debugging, and deployment — whether we&apos;re starting from an empty
+            repository, an existing codebase, or a live production system.
+          </p>
+        </div>
 
-        <div className="flex flex-col gap-4 border-t border-line pt-5 md:col-span-12 md:flex-row md:items-baseline md:justify-between">
+        <div className="hero-meta flex flex-col gap-4 border-t border-line pt-5 md:col-span-12 md:flex-row md:items-baseline md:justify-between">
           {site.availability ? (
             <Availability />
           ) : (
             <span />
           )}
 
-          {site.email ? (
+          <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
             <a
-              href={`mailto:${site.email}`}
-              className="inline-flex min-h-11 items-center text-sm text-ink underline decoration-line underline-offset-4 transition-colors hover:decoration-signal"
+              href="#work"
+              className="group inline-flex min-h-11 items-center gap-2 text-sm text-slate transition-colors hover:text-ink"
             >
-              {site.email}
+              Selected work
+              <ArrowDown className="size-4 transition-transform duration-300 group-hover:translate-y-0.5" />
             </a>
-          ) : (
-            <span />
-          )}
+
+            {site.email ? (
+              <a
+                href={`mailto:${site.email}`}
+                data-magnetic
+                className="inline-flex min-h-11 items-center text-sm text-ink underline decoration-line underline-offset-4 transition-colors hover:decoration-signal"
+              >
+                {site.email}
+              </a>
+            ) : (
+              <span />
+            )}
+          </div>
         </div>
       </div>
     </section>
