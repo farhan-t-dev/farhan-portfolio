@@ -62,36 +62,6 @@ export function Hero() {
             repository, an existing codebase, or a live production system.
           </p>
         </div>
-
-        <div className="hero-meta flex flex-col gap-4 border-t border-line pt-5 md:col-span-12 md:flex-row md:items-baseline md:justify-between">
-          {site.availability ? (
-            <Availability />
-          ) : (
-            <span />
-          )}
-
-          <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
-            <a
-              href="#work"
-              className="group inline-flex min-h-11 items-center gap-2 text-sm text-slate transition-colors hover:text-ink"
-            >
-              Selected work
-              <ArrowDown className="size-4 transition-transform duration-300 group-hover:translate-y-0.5" />
-            </a>
-
-            {site.email ? (
-              <a
-                href={`mailto:${site.email}`}
-                data-magnetic
-                className="inline-flex min-h-11 items-center text-sm text-ink underline decoration-line underline-offset-4 transition-colors hover:decoration-signal"
-              >
-                {site.email}
-              </a>
-            ) : (
-              <span />
-            )}
-          </div>
-        </div>
       </div>
     </section>
   );
