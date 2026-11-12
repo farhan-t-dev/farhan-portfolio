@@ -1,4 +1,5 @@
 import { site } from "@/data/site";
+import { ArrowUp } from "@/components/ui/icons";
 
 /**
  * Site footer: a copyright line + a self-referential colophon.
@@ -20,9 +21,20 @@ export function SiteFooter() {
           © {year} {site.name}
         </p>
 
-        <p className="text-sm text-slate">
-          Built with Next.js, React and Tailwind CSS
-        </p>
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-baseline sm:gap-6">
+          <p className="text-sm text-slate">
+            Built with Next.js, React and Tailwind CSS
+          </p>
+
+          <a
+            href="#top"
+            className="group inline-flex min-h-11 items-center gap-2 text-sm text-slate underline-offset-4 transition-colors hover:text-ink hover:underline"
+          >
+            Top
+            <ArrowUp className="size-3.5 transition-transform duration-300 group-hover:-translate-y-0.5" />
+            <span className="sr-only"> of page</span>
+          </a>
+        </div>
       </div>
     </footer>
   );

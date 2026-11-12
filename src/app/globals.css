@@ -28,6 +28,25 @@
   --font-serif: var(--font-newsreader), ui-serif, Georgia, serif;
 }
 
+/* ------------------------------------------------------------------ *
+ * Motion tokens — "The Handover, in motion"
+ *
+ * One family of curves. Motion in this design is structural: rules draw,
+ * plates register, index entries inspect. Nothing floats, bounces, or
+ * loops for attention. These are plain custom properties rather than
+ * Tailwind theme values because they are used from authored CSS and from
+ * inline transforms, not utilities.
+ * ------------------------------------------------------------------ */
+:root {
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+  --ease-in-out-quart: cubic-bezier(0.76, 0, 0.24, 1);
+  --dur-fast: 160ms;
+  --dur-base: 420ms;
+  --dur-slow: 720ms;
+  --scroll-progress: 0;
+}
+
 /* Archivo's width axis (wdth 62–125) exposes font-stretch utilities in
  * Tailwind v4. "Display" type is a semantic role in this design: the
  * poster-scale, expanded headlines. 118% sits just under Archivo's max
@@ -84,6 +103,21 @@
     font-family: var(--font-sans);
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
+  }
+
+  /* A tooth of paper, not a texture pack. The noise is fixed in the
+   * viewport and sits above the page at 2.6% opacity, so it reads as the
+   * surface the document is printed on rather than as an image. It is
+   * pointer-transparent and absent from the accessibility tree. */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    pointer-events: none;
+    opacity: 0.026;
+    mix-blend-mode: multiply;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.82' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.7'/%3E%3C/svg%3E");
   }
 
   /* Selection in the accent, not the browser's default blue — the one
@@ -152,21 +186,403 @@ li:has([data-stretched-link]:focus-visible) {
     text-decoration-color, fill, stroke;
 }
 
-/* The single orchestrated moment on the page: one entrance for the hero
- * headline. Nothing else animates on scroll — stillness is the point.
- * The reduced-motion block in @layer base already collapses this to
- * ~0ms, so it degrades to simply present. */
-@keyframes hero-in {
+/* ================================================================== *
+ * Motion system
+ *
+ * Everything below is gated on `html[data-motion="on"]`, set by a tiny
+ * inline script only when the visitor has not asked for reduced motion.
+ * No script, no hidden content: the site is complete before it moves.
+ * ================================================================== */
+
+/* ------------------------------------------------------------------ *
+ * Reveals — the document being laid out.
+ *
+ * A single observer marks a section label, a row, or a group. Groups
+ * stagger their direct children through `--reveal-delay`, which the
+ * director writes once on mount. Rules and plates get their own reveal
+ * forms so the page does not reduce to the generic fade-up everywhere.
+ * ------------------------------------------------------------------ */
+html[data-motion="on"] [data-reveal] {
+  opacity: 0;
+  translate: 0 12px;
+  transition:
+    opacity 560ms var(--ease-out-expo),
+    translate 720ms var(--ease-out-expo);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+
+html[data-motion="on"] [data-reveal].is-revealed {
+  opacity: 1;
+  translate: 0 0;
+}
+
+html[data-motion="on"] [data-reveal-group] > [data-reveal] {
+  opacity: 0;
+  translate: 0 14px;
+  transition:
+    opacity 560ms var(--ease-out-expo),
+    translate 720ms var(--ease-out-expo);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+
+html[data-motion="on"] [data-reveal-group].is-revealed > [data-reveal] {
+  opacity: 1;
+  translate: 0 0;
+}
+
+/* Rules draw from their origin. Used by the hero's vertical rule and by
+ * any hairline that should appear as a stroke rather than a fade. */
+html[data-motion="on"] [data-reveal="rule"] {
+  opacity: 1;
+  translate: none;
+  scale: 1 0;
+  transform-origin: left center;
+  transition: scale 900ms var(--ease-out-expo);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+
+html[data-motion="on"] [data-reveal="rule"].is-revealed {
+  scale: 1 1;
+}
+
+html[data-motion="on"] [data-reveal="rule-y"] {
+  opacity: 1;
+  translate: none;
+  scale: 1 0;
+  transform-origin: top center;
+  transition: scale 900ms var(--ease-out-expo);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+
+html[data-motion="on"] [data-reveal="rule-y"].is-revealed {
+  scale: 1 1;
+}
+
+/* Plates and portraits are uncovered from the bottom edge, like a sheet
+ * being lifted away. The observed wrapper stays unclipped — a clip-path
+ * on the observed box would make IntersectionObserver report an empty
+ * intersection and the reveal would never fire. The inner `.reveal-clip`
+ * is what gets masked. */
+html[data-motion="on"] [data-reveal="clip"] {
+  opacity: 1;
+  translate: none;
+}
+
+html[data-motion="on"] [data-reveal="clip"] > .reveal-clip {
+  clip-path: inset(0 0 100% 0);
+  transition: clip-path 1000ms var(--ease-out-expo);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+
+html[data-motion="on"] [data-reveal="clip"].is-revealed > .reveal-clip {
+  clip-path: inset(0 0 0 0);
+}
+
+/* ------------------------------------------------------------------ *
+ * Hero — one orchestrated entrance.
+ *
+ * The headline is split into words by the hero server component. Each
+ * word rises out of a shared baseline with a short stagger; the rule and
+ * supporting copy follow. Nothing else on the page plays on load.
+ * ------------------------------------------------------------------ */
+html[data-motion="on"] .hero-word {
+  opacity: 0;
+  animation: hero-word-in 900ms var(--ease-out-expo) forwards;
+  animation-delay: calc(var(--word-index, 0) * 52ms + 70ms);
+}
+
+@keyframes hero-word-in {
   from {
     opacity: 0;
-    transform: translateY(8px);
+    translate: 0 0.55em;
   }
   to {
     opacity: 1;
-    transform: none;
+    translate: 0 0;
   }
 }
 
-.animate-hero-in {
-  animation: hero-in 400ms cubic-bezier(0.2, 0, 0, 1) both;
+html[data-motion="on"] .hero-copy {
+  opacity: 0;
+  animation: fade-up 760ms var(--ease-out-expo) 680ms forwards;
+}
+
+html[data-motion="on"] .hero-meta {
+  opacity: 0;
+  animation: fade-up 760ms var(--ease-out-expo) 860ms forwards;
+}
+
+html[data-motion="on"] .hero-rule-y {
+  scale: 1 0;
+  transform-origin: top center;
+  animation: rule-y 900ms var(--ease-out-expo) 300ms forwards;
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    translate: 0 10px;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+@keyframes rule-y {
+  to {
+    scale: 1 1;
+  }
+}
+
+/* The availability dot is the only recurring motion on the site. It is
+ * a soft ring, not a blink, and the text beside it carries the claim. */
+.availability-dot {
+  animation: availability-pulse 2.8s var(--ease-out-quart) infinite;
+}
+
+@keyframes availability-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgb(21 128 61 / 0.32);
+  }
+  65% {
+    box-shadow: 0 0 0 7px rgb(21 128 61 / 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgb(21 128 61 / 0);
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * Magnetic links — a few pixels toward the pointer, then home.
+ * The director writes --mag-x / --mag-y on pointermove.
+ * ------------------------------------------------------------------ */
+[data-magnetic] {
+  transform: translate(var(--mag-x, 0px), var(--mag-y, 0px));
+  transition: transform 240ms var(--ease-out-expo);
+}
+
+/* ------------------------------------------------------------------ *
+ * Section labels — the red registration square snaps in with the label.
+ * ------------------------------------------------------------------ */
+.section-marker {
+  transform: scale(0);
+  transition: transform 620ms var(--ease-out-expo) 120ms;
+}
+
+.is-revealed .section-marker {
+  transform: scale(1);
+}
+
+/* ------------------------------------------------------------------ *
+ * Process — the four rules are drawn in sequence, not faded in.
+ * The li keeps its signal border for the no-motion case; when motion is
+ * on, the border is cleared and a pseudo-rule draws over the same pixel.
+ * ------------------------------------------------------------------ */
+html[data-motion="on"] [data-process-step] {
+  border-top-color: transparent;
+}
+
+html[data-motion="on"] [data-process-step]::before {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  top: 0;
+  height: 1px;
+  background: var(--color-signal);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 780ms var(--ease-out-expo);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+
+html[data-motion="on"] [data-process-step].is-revealed::before {
+  transform: scaleX(1);
+}
+
+/* ------------------------------------------------------------------ *
+ * Plates — screenshots sit still until the cell is inspected.
+ * ------------------------------------------------------------------ */
+[data-plate] img {
+  transition: scale 950ms var(--ease-out-expo);
+}
+
+.group:hover [data-plate] img,
+.group:focus-within [data-plate] img {
+  scale: 1.035;
+}
+
+[data-plate]::after {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  z-index: 1;
+  height: 2px;
+  background: var(--color-signal);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 620ms var(--ease-out-expo);
+}
+
+.group:hover [data-plate]::after,
+.group:focus-within [data-plate]::after {
+  transform: scaleX(1);
+}
+
+/* ------------------------------------------------------------------ *
+ * Work index — the active row draws a red edge; the plate swaps.
+ * ------------------------------------------------------------------ */
+[data-work-row]::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--color-signal);
+  transform: scaleY(0);
+  transform-origin: top center;
+  transition: transform 420ms var(--ease-out-expo);
+}
+
+[data-work-row][data-active="true"]::before {
+  transform: scaleY(1);
+}
+
+[data-work-row] .work-row-arrow {
+  opacity: 0;
+  transform: translateX(-3px);
+  transition:
+    opacity 240ms var(--ease-out-expo),
+    transform 320ms var(--ease-out-expo);
+}
+
+[data-work-row][data-active="true"] .work-row-arrow {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* The plate in the preview panel is replaced with a brief register-in
+ * rather than a crossfade of six stacked images. */
+html[data-motion="on"] .preview-plate {
+  animation: plate-in 520ms var(--ease-out-expo) both;
+}
+
+@keyframes plate-in {
+  from {
+    opacity: 0;
+    scale: 1.015;
+  }
+  to {
+    opacity: 1;
+    scale: 1;
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * Contact — the email is the page's one oversized action.
+ * ------------------------------------------------------------------ */
+[data-email] {
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.18em;
+  transition:
+    text-decoration-color 220ms var(--ease-out-expo),
+    transform 240ms var(--ease-out-expo);
+}
+
+[data-email]:hover {
+  text-decoration-color: var(--color-signal);
+}
+
+/* ------------------------------------------------------------------ *
+ * View transitions — shared project plates and directional page changes.
+ * The header is anchored so the document moves, not the chrome.
+ * ------------------------------------------------------------------ */
+::view-transition {
+  pointer-events: none;
+}
+
+::view-transition-group(site-header) {
+  animation: none;
+  z-index: 100;
+}
+
+::view-transition-old(site-header) {
+  display: none;
+}
+
+::view-transition-new(site-header) {
+  animation: none;
+}
+
+::view-transition-group(.morph) {
+  animation-duration: 520ms;
+  animation-timing-function: var(--ease-out-expo);
+}
+
+::view-transition-image-pair(.morph) {
+  animation-name: via-blur;
+}
+
+@keyframes via-blur {
+  30% {
+    filter: blur(2px);
+  }
+}
+
+::view-transition-old(.nav-forward) {
+  --slide-offset: -52px;
+  animation:
+    140ms ease-in both fade reverse,
+    420ms var(--ease-out-expo) both slide reverse;
+}
+
+::view-transition-new(.nav-forward) {
+  --slide-offset: 52px;
+  animation:
+    240ms ease-out 140ms both fade,
+    520ms var(--ease-out-expo) both slide;
+}
+
+::view-transition-old(.nav-back) {
+  --slide-offset: 52px;
+  animation:
+    140ms ease-in both fade reverse,
+    420ms var(--ease-out-expo) both slide reverse;
+}
+
+::view-transition-new(.nav-back) {
+  --slide-offset: -52px;
+  animation:
+    240ms ease-out 140ms both fade,
+    520ms var(--ease-out-expo) both slide;
+}
+
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slide {
+  from {
+    translate: var(--slide-offset);
+  }
+  to {
+    translate: 0;
+  }
+}
+
+/* A transition is motion, so it gets the same respect as the rest. */
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(*),
+  ::view-transition-new(*),
+  ::view-transition-group(*) {
+    animation-duration: 0s !important;
+    animation-delay: 0s !important;
+  }
 }

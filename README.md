@@ -16,7 +16,7 @@
 </div>
 
 <p align="center">
-  <img src="docs/home-desktop.png" alt="The portfolio homepage: the headline “I build web applications, and finish the ones already started.” above a short introduction, availability indicator and email address." width="76%" />
+  <img src="docs/home-desktop.png" alt="The portfolio homepage: the headline “I build web applications, and finish the ones already started.” above a short introduction with a red rule, availability indicator, selected-work link and email address." width="76%" />
   <img src="docs/home-mobile.png" alt="The same homepage at a 390px mobile viewport." width="21%" />
 </p>
 
@@ -55,6 +55,7 @@ The full index — thirteen entries across client work, migrations and personal 
 - **Generated social cards.** A 1200×630 card is rendered for the site and for every project using `next/og` and the same fonts and palette as the page. Project cards use the project's lead screenshot; projects without one get a typographic card rather than a substitute image. Screenshots are converted from WebP to JPEG for Satori, and the finished cards are quantised to keep every one under WhatsApp's ~300 KB preview limit.
 - **Search-ready metadata.** Per-page Open Graph and Twitter tags with absolute image URLs, `sitemap.xml` generated from the project data, `robots.txt`, Person JSON-LD with GitHub and LinkedIn in `sameAs`, and Google Search Console verification.
 - **Accessible by construction.** Skip link, semantic landmarks, `sr-only` headings and link text, visible focus states, and a global `prefers-reduced-motion` rule. Colour pairs are held to WCAG AA.
+- **Motion with a floor.** A single motion island and CSS-only reveals register the page like a printed sheet: a split-word hero, rules that draw, plates that resolve, a magnetic email link, a live local clock and a scroll-progress hairline. Motion is opt-in before first paint and only when `prefers-reduced-motion: no-preference`; with reduced motion, no JavaScript, or a blocked script, every element renders in its final state. Project plates and page changes use the View Transitions API where the browser supports it.
 - **Typed content.** Strict TypeScript throughout; project pages, cards and sitemap entries are all derived from `src/data/projects.ts`.
 - **Self-hosted type.** Archivo for structure, Newsreader for prose, loaded through `next/font` so there is no render-blocking font request.
 
@@ -95,11 +96,12 @@ There are no environment variables to set.
 │   │   ├── opengraph-image.tsx   # Site-wide social card
 │   │   ├── sitemap.ts            # Sitemap from project data
 │   │   ├── robots.ts             # robots.txt
-│   │   └── layout.tsx            # Root metadata, JSON-LD, fonts, chrome
+│   │   └── layout.tsx            # Root metadata, JSON-LD, fonts, motion bootstrap, chrome
 │   ├── components/
-│   │   ├── layout/               # Header, navigation, footer
+│   │   ├── layout/               # Header, navigation, footer, scroll progress
+│   │   ├── motion/               # Motion director, copy email, local time
 │   │   ├── sections/             # Hero, work, services, process, stack, about, contact
-│   │   └── ui/                   # Project rows, tiles, tags, availability, icons
+│   │   └── ui/                   # Work index, project rows, tiles, tags, availability, icons
 │   ├── data/
 │   │   ├── site.ts               # Name, role, tagline, contact, profile links
 │   │   ├── projects.ts           # Every project entry

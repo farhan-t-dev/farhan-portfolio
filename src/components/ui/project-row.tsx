@@ -1,108 +1,77 @@
 import Link from "next/link";
 
 import type { Project } from "@/data/projects";
-import { isExternalUrl } from "@/lib/utils";
-import { ArrowRight, ArrowUpRight } from "./icons";
+import { ArrowRight } from "./icons";
 import { ProjectMeta } from "./project-meta";
 
 type ProjectRowProps = {
   project: Project;
   /**
-   * Heading level, not a rendered string: on the homepage the row sits
-   * under the section label (h2), so its own heading is h3. The prop
-   * exists so the row can be dropped under a page title instead without
-   * skipping a level.
+   * Heading level, not a rendered string: the register sits under the
+   * page title and its "More work" label, so its rows use h3.
    */
   heading?: "h2" | "h3";
 };
 
 /**
- * One project as a hairline row — title, metadata and stack on the left,
- * summary and outbound links on the right, in the same 12-column rhythm
- * as the Services and Stack sections so work reads as part of one grid.
+ * One entry in the register: the compact, ruled tier under the lead
+ * folios.
  *
- * No screenshot: this is the ruled index. On the homepage it sends
- * people to /work; on /work it is the tier below the large cells, where
- * nine more entries need to be scannable in a screen or two rather than
- * one plate each.
- *
- * From md to lg the two blocks stack: at tablet width the indented
- * column is only about 500px, and a side-by-side split leaves the title
- * around 150px — three wrapped lines for "Live marketplace migration".
- * Stacked, the title gets the full measure back and the row stays easy
- * to scan; at lg the columns split again.
- *
- * The title link stretches over the whole row, so the row can be opened
- * from anywhere along it — a 20px-high title alone was a thin target on
- * touch. The ring therefore belongs to the row, not the title (see
- * `data-stretched-link` in globals.css). Outbound links sit above that
- * overlay at 44px tall, and the arrow marks the row as a way in without
- * turning it into a card.
- *
- * Links are filtered through isExternalUrl: a placeholder like
- * "https://<site-url>" in projects.ts renders as no link at all, never
- * as a broken anchor.
+ * Four columns — number, project, what it does, what it runs on — so the
+ * remaining work can be scanned like a contents page. There is no plate
+ * here; evidence belongs to the lead tier and the project note. The row
+ * itself is the action, so the title link stretches across it and the
+ * arrow only appears on inspection.
  */
 export function ProjectRow({ project, heading: Heading = "h3" }: ProjectRowProps) {
-  const links = [
-    { label: "Live site", url: project.liveUrl },
-    { label: "Repository", url: project.repoUrl },
-    { label: "App Store", url: project.appStoreUrl},
-  ].filter(
-    (link): link is { label: string; url: string } => isExternalUrl(link.url),
-  );
-
   return (
-    <li className="group relative grid grid-cols-1 gap-x-6 gap-y-2 border-b border-line py-5 transition-colors duration-150 hover:bg-mist/60 focus-within:bg-mist/60 md:grid-cols-12 md:gap-y-3 md:py-6">
-      <div className="min-w-0 md:col-span-12 lg:col-span-5">
-        <Heading className="text-lg font-semibold tracking-tight [overflow-wrap:anywhere] lg:text-xl">
-          <Link
-            href={`/projects/${project.slug}`}
-            data-stretched-link
-            className="underline decoration-slate/70 underline-offset-4 transition-colors after:absolute after:inset-0 after:content-[''] hover:decoration-signal"
+    <li
+      data-reveal
+      className="group relative border-b border-line transition-colors hover:bg-mist/40 focus-within:bg-mist/40"
+    >
+      <div className="grid grid-cols-1 gap-x-6 gap-y-2 py-5 md:py-6 lg:grid-cols-12 lg:gap-y-3">
+        <div className="flex items-center gap-3 lg:col-span-1 lg:items-start">
+          <span
+            aria-hidden="true"
+            className="font-display text-sm tabular-nums text-slate"
           >
-            {project.title}
-            <span className="sr-only">, project note</span>
-          </Link>
-        </Heading>
+            {String(project.rank).padStart(2, "0")}
+          </span>
+          <span className="h-px flex-1 bg-line lg:hidden" />
+        </div>
 
-        <ProjectMeta project={project} className="mt-1.5" />
+        <div className="min-w-0 lg:col-span-4">
+          <div className="flex items-start justify-between gap-4">
+            <Heading className="text-xl font-semibold tracking-tight [overflow-wrap:anywhere]">
+              <Link
+                href={`/projects/${project.slug}`}
+                transitionTypes={["nav-forward"]}
+                data-stretched-link
+                className="underline decoration-slate/70 underline-offset-4 transition-colors after:absolute after:inset-0 after:content-[''] group-hover:decoration-signal"
+              >
+                {project.title}
+                <span className="sr-only">, project note</span>
+              </Link>
+            </Heading>
+
+            <ArrowRight className="mt-1.5 hidden size-4 shrink-0 text-slate opacity-0 transition-[opacity,transform,color] duration-200 group-hover:translate-x-0.5 group-hover:text-ink group-hover:opacity-100 group-focus-within:text-ink group-focus-within:opacity-100 lg:block" />
+          </div>
+
+          <ProjectMeta project={project} className="mt-1.5" />
+        </div>
+
+        <p className="max-w-[58ch] font-serif text-base leading-relaxed text-pretty text-slate lg:col-span-4">
+          {project.description}
+        </p>
 
         {project.tags.length > 0 && (
-          <ul className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-sm text-slate">
+          <ul className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-slate lg:col-span-3 lg:content-start">
             {project.tags.map((tag) => (
               <li key={tag}>{tag}</li>
             ))}
           </ul>
         )}
       </div>
-
-      <div className="min-w-0 md:col-span-12 lg:col-span-7 lg:pr-7">
-        <p className="max-w-[62ch] font-serif text-base leading-relaxed text-pretty text-slate">
-          {project.description}
-        </p>
-
-        {links.length > 0 && (
-          <ul className="relative z-10 mt-2 flex flex-wrap gap-x-6 text-sm">
-            {links.map((link) => (
-              <li key={link.label}>
-                <a
-                  href={link.url}
-                  rel="noopener noreferrer"
-                  target="_blank"
-                  className="inline-flex min-h-11 items-center gap-1.5 text-slate underline-offset-4 transition-colors hover:text-ink hover:underline"
-                >
-                  {link.label}
-                  <ArrowUpRight className="size-3.5" />
-                  <span className="sr-only"> (opens in a new tab)</span>
-                </a>
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
-
-      <ArrowRight className="pointer-events-none absolute right-0 top-6 hidden size-4 shrink-0 text-slate opacity-0 transition-[opacity,transform,color] duration-200 group-hover:translate-x-0.5 group-hover:text-ink group-hover:opacity-100 group-focus-within:text-ink group-focus-within:opacity-100 md:block" />
     </li>
   );
 }

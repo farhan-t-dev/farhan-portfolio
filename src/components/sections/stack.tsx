@@ -13,13 +13,23 @@ export function Stack() {
 
   return (
     <Section id="stack" label="Stack">
-      <div className="border-t border-line">
+      <div className="border-t border-line" data-reveal-group>
         {groups.map((group) => (
           <div
             key={group.label}
-            className="grid grid-cols-1 gap-x-6 gap-y-2 border-b border-line py-5 md:grid-cols-12 md:py-6"
+            data-reveal
+            className="group relative grid grid-cols-1 gap-x-6 gap-y-2 border-b border-line py-5 transition-colors hover:bg-mist/40 md:grid-cols-12 md:py-6"
           >
-            <h3 className="text-sm font-medium text-slate md:col-span-4 lg:col-span-3">
+            <span
+              aria-hidden="true"
+              className="absolute inset-y-0 left-0 w-px origin-top scale-y-0 bg-signal transition-transform duration-300 group-hover:scale-y-100"
+            />
+
+            <h3 className="flex items-center gap-2 text-sm font-medium text-slate transition-colors group-hover:text-ink md:col-span-4 lg:col-span-3">
+              <span
+                aria-hidden="true"
+                className="size-1 shrink-0 bg-line transition-colors group-hover:bg-signal"
+              />
               {group.label}
             </h3>
             <ul className="flex flex-wrap gap-x-5 gap-y-1 md:col-span-8 lg:col-span-9">

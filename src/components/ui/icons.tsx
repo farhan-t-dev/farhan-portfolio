@@ -43,3 +43,36 @@ export function ArrowUpRight({ className }: IconProps) {
     </svg>
   );
 }
+
+export function ArrowDown({ className }: IconProps) {
+  return (
+    <svg {...base} className={className}>
+      <path d="M8 2.5v11M3.5 9 8 13.5 12.5 9" />
+    </svg>
+  );
+}
+
+export function ArrowUp({ className }: IconProps) {
+  return (
+    <svg {...base} className={className}>
+      <path d="M8 13.5v-11M3.5 7 8 2.5 12.5 7" />
+    </svg>
+  );
+}
+
+export function Copy({ className }: IconProps) {
+  return (
+    <svg {...base} className={className}>
+      <rect x="5.5" y="5.5" width="8" height="8" />
+      <path d="M10.5 5.5v-3h-8v8h3" />
+    </svg>
+  );
+}
+
+export function Check({ className }: IconProps) {
+  return (
+    <svg {...base} className={className}>
+      <path d="m2.5 8.5 3.5 3.5 7.5-8" />
+    </svg>
+  );
+}

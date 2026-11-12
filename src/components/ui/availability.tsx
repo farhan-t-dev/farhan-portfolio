@@ -27,7 +27,7 @@ export function Availability({ className }: AvailabilityProps) {
         aria-hidden="true"
         className={
           site.availability.status === "available"
-            ? "size-2 shrink-0 rounded-full bg-available"
+            ? "availability-dot size-2 shrink-0 rounded-full bg-available"
             : "size-2 shrink-0 rounded-full bg-line"
         }
       />

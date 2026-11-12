@@ -45,7 +45,7 @@ export function ProjectThumb({
   if (!image) return null;
 
   return (
-    <div className={cn("relative overflow-hidden bg-mist", className)}>
+    <div data-plate className={cn("relative overflow-hidden bg-mist", className)}>
       <Image
         src={image.src}
         alt={projectImageAlt(project, image)}

@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { archivo, newsreader } from "@/lib/fonts";
 import { site } from "@/data/site";
 import { socialMetadata } from "@/lib/social-metadata";
+import { MotionDirector } from "@/components/motion/motion-director";
 import { SiteHeader } from "@/components/layout/site-header";
 import { SiteFooter } from "@/components/layout/site-footer";
 import "./globals.css";
@@ -60,9 +61,20 @@ export default function RootLayout({
   return (
     <html
       lang="en"
+      suppressHydrationWarning
+      data-scroll-behavior="smooth"
       className={`${archivo.variable} ${newsreader.variable}`}
     >
       <body className="flex min-h-dvh flex-col">
+        {/* Motion is opt-in before the first paint. If the script is
+         * blocked, or the visitor prefers reduced motion, the attribute is
+         * never set and every authored animation stays dormant. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              "(function(){try{if(!window.matchMedia||!('IntersectionObserver' in window))return;if(!window.matchMedia('(prefers-reduced-motion: no-preference)').matches)return;document.documentElement.dataset.motion='on';}catch(e){}})();",
+          }}
+        />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -84,6 +96,7 @@ export default function RootLayout({
         </main>
 
         <SiteFooter />
+        <MotionDirector />
       </body>
     </html>
   );

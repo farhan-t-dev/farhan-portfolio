@@ -1,3 +1,5 @@
+import { ViewTransition } from "react";
+
 import { Hero } from "@/components/sections/hero";
 import { Services } from "@/components/sections/services";
 import { Process } from "@/components/sections/process";
@@ -7,9 +9,10 @@ import { About } from "@/components/sections/about";
 import { Contact } from "@/components/sections/contact";
 
 /**
- * Homepage — composed as server components only. No client JS on this
- * route: the shell, grid, and all sections render on the server, and the
- * one animation is plain CSS.
+ * Homepage — sections are server components; a few small client islands
+ * live inside them (the work index's hover/focus preview, the copy-email
+ * control and the local clock). The page transition and every other
+ * motion cue are authored CSS, switched on by the motion director.
  *
  * Order is the pitch order for freelance clients (primary audience):
  * proof -> what I take on -> how it runs -> with what -> who -> how to
@@ -17,14 +20,28 @@ import { Contact } from "@/components/sections/contact";
  */
 export default function Home() {
   return (
-    <>
-      <Hero />
-      <Work />
-      <Services />
-      <Process />
-      <Stack />
-      <About />
-      <Contact />
-    </>
+    <ViewTransition
+      enter={{
+        "nav-forward": "nav-forward",
+        "nav-back": "nav-back",
+        default: "none",
+      }}
+      exit={{
+        "nav-forward": "nav-forward",
+        "nav-back": "nav-back",
+        default: "none",
+      }}
+      default="none"
+    >
+      <>
+        <Hero />
+        <Work />
+        <Services />
+        <Process />
+        <Stack />
+        <About />
+        <Contact />
+      </>
+    </ViewTransition>
   );
 }

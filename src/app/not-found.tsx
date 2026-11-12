@@ -19,18 +19,34 @@ export const metadata: Metadata = {
 export default function NotFound() {
   return (
     <div className="shell gutter py-14 md:py-20 lg:py-24">
-      <div className="grid grid-cols-1 gap-x-6 gap-y-6 md:grid-cols-12">
-        <h1 className="self-start max-w-[14ch] font-display text-[clamp(2.25rem,6vw,4.5rem)] md:col-span-8">
+      <div className="relative grid grid-cols-1 gap-x-6 gap-y-6 md:grid-cols-12">
+        <span
+          aria-hidden="true"
+          className="pointer-events-none absolute -top-10 right-0 hidden select-none font-display text-[clamp(8rem,19vw,15rem)] leading-none text-signal/10 md:block"
+        >
+          404
+        </span>
+
+        <h1
+          data-reveal
+          className="relative z-10 self-start max-w-[14ch] font-display text-[clamp(2.25rem,6vw,4.5rem)] md:col-span-8"
+        >
           Page not found.
         </h1>
 
-        <div className="md:col-span-8">
-          <p className="max-w-[54ch] font-serif text-xl leading-relaxed text-slate">
+        <div className="relative z-10 md:col-span-8">
+          <p
+            data-reveal
+            className="max-w-[54ch] font-serif text-xl leading-relaxed text-slate"
+          >
             The link may be out of date, or the project may have moved. Every
             project note that is live is in the work index.
           </p>
 
-          <ul className="mt-8 flex flex-wrap gap-x-8 border-t border-line pt-5 text-sm">
+          <ul
+            data-reveal
+            className="mt-8 flex flex-wrap gap-x-8 border-t border-line pt-5 text-sm"
+          >
             <li>
               <Link
                 href="/work"

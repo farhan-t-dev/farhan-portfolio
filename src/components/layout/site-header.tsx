@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 import { site } from "@/data/site";
 import { HeaderScrollBorder } from "./header-scroll-border";
 import { SiteNav } from "./site-nav";
@@ -21,14 +23,21 @@ import { SiteNav } from "./site-nav";
  */
 export function SiteHeader() {
   return (
-    <header className="sticky top-0 z-40 touch-manipulation bg-paper backdrop-blur supports-backdrop-filter:bg-paper/90">
+    <header
+      id="top"
+      className="sticky top-0 z-40 touch-manipulation bg-paper backdrop-blur [view-transition-name:site-header] supports-backdrop-filter:bg-paper/95"
+    >
       <div className="shell gutter flex h-14 items-center justify-between gap-4 md:h-16 md:gap-8">
-        <a
+        <Link
           href="/"
-          className="inline-flex min-h-11 items-center text-lg font-semibold tracking-tight text-ink"
+          className="group inline-flex min-h-11 items-center text-lg font-semibold tracking-tight text-ink"
         >
           {site.name}
-        </a>
+          <span
+            aria-hidden="true"
+            className="ml-2 h-px w-0 bg-signal transition-[width] duration-300 group-hover:w-5"
+          />
+        </Link>
 
         <nav aria-label="Primary" className="flex items-center gap-6">
           <SiteNav />

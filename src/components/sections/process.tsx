@@ -45,21 +45,29 @@ export function Process() {
       {/* Mobile: one column. Tablet and small laptops: 2x2. Four columns
           only from xl (1280px): at 1024px four steps yielded ~170px each
           (~21 characters), which is a newspaper column, not a step. */}
-      <ol className="grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-2 xl:grid-cols-4">
+      <ol
+        className="grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-2 xl:grid-cols-4"
+        data-reveal-group
+      >
         {steps.map((step, index) => (
-          <li key={step.number} className="border-t border-signal pt-4">
+          <li
+            key={step.number}
+            data-reveal
+            data-process-step
+            className="group relative border-t border-signal pt-4"
+          >
             <div className="flex items-baseline gap-3">
               {/* Red is a RULE here, never text: signal-on-ink measures
                   3.74:1 — fine for a graphical border (3:1) but under the
                   4.5:1 that text needs, so the number itself is paper. */}
-              <span className="font-display text-sm text-mist/70">
+              <span className="font-display text-sm tabular-nums text-mist/70 transition-colors group-hover:text-mist">
                 {step.number}
               </span>
               <h3 className="text-lg font-semibold tracking-tight text-paper">
                 {step.title}
               </h3>
             </div>
-            <p className="mt-2 max-w-[46ch] font-serif text-base leading-relaxed text-mist/80 text-pretty">
+            <p className="mt-2 max-w-[46ch] font-serif text-base leading-relaxed text-mist/80 text-pretty transition-colors group-hover:text-mist">
               {step.body}
             </p>
             <span className="sr-only">

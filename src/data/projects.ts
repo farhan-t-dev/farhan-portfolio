@@ -63,12 +63,12 @@ export type Project = {
  * Written in rank order to keep the file readable, though components read
  * `rankedProjects` and never trust array position.
  *
- * Featured entries come first in rank order and fill a 3×2 block on
- * /work: Fletched, Parts Seekr, PropManage / MarketFlow, Cognabase, the
- * marketplace migration. The migration is the strongest single piece of
- * evidence (a live system moved, database and all) and closes the block.
- * That is the whole point of the flag: rank orders within a tier, the
- * flag decides the tier.
+ * Featured entries come first in rank order and fill the lead tier on
+ * /work: Fletched, PropManage, the marketplace migration / Parts Seekr,
+ * MarketFlow, Cognabase. The migration is the strongest single piece of
+ * evidence (a live system moved, database and all). That is the whole
+ * point of the flag: rank orders within a tier, the flag decides the
+ * tier.
  */
 export const projects: Project[] = [
   {
