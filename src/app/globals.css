@@ -431,53 +431,135 @@ html[data-motion="on"] [data-process-step].is-revealed::before {
 }
 
 /* ------------------------------------------------------------------ *
- * Work index — the active row draws a red edge; the plate swaps.
+ * Work index — the inspected row draws a red edge on its left and steps
+ * in from it; the plate swaps.
+ *
+ * The accent is a registration rule on the row's left edge, full height
+ * so it reads as the row's boundary rather than a clipped stub. It is
+ * drawn by :hover / :focus-within, not by the index state, so the
+ * decoration cannot be left behind on the last row after the pointer
+ * leaves and no row looks inspected at rest. Entry is slow and the exit
+ * is quick: at a fast cursor only the row under the pointer carries a
+ * rule instead of several retracting at once.
+ *
+ * No field is painted behind the row on inspection. A filled ground read
+ * as a selected control, and the rule is already the mark; leaving the
+ * row on paper keeps this list in the ruled, printed world of the
+ * registers under it — only here the margin steps.
+ *
+ * Every transition here is gated on `data-motion`; the states themselves
+ * are not. With reduced motion the row still takes its edge and step, it
+ * just arrives without the travel.
  * ------------------------------------------------------------------ */
 [data-work-row]::before {
   content: "";
   position: absolute;
   left: 0;
-  top: 50%;
-  height: 55%;
+  top: 0;
+  height: 100%;
   width: 2px;
   background: var(--color-signal);
   transform: scaleY(0);
-  transform-origin: center;
-  translate: 0 -50%;
-  transition: transform 420ms var(--ease-out-expo);
+  transform-origin: top center;
 }
 
-[data-work-row][data-active="true"]::before {
+[data-work-row]:hover::before,
+[data-work-row]:focus-within::before {
   transform: scaleY(1);
+}
+
+html[data-motion="on"] [data-work-row]::before {
+  transition: transform 90ms var(--ease-in-out-quart);
+}
+
+html[data-motion="on"] [data-work-row]:hover::before,
+html[data-motion="on"] [data-work-row]:focus-within::before {
+  transition: transform 380ms var(--ease-out-expo);
 }
 
 [data-work-row] .work-row-arrow {
   opacity: 0;
   transform: translateX(-3px);
-  transition:
-    opacity 240ms var(--ease-out-expo),
-    transform 320ms var(--ease-out-expo);
 }
 
-[data-work-row][data-active="true"] .work-row-arrow {
+[data-work-row]:hover .work-row-arrow,
+[data-work-row]:focus-within .work-row-arrow {
   opacity: 1;
   transform: translateX(0);
 }
 
-/* The plate in the preview panel is replaced with a brief register-in
- * rather than a crossfade of six stacked images. */
-html[data-motion="on"] .preview-plate {
-  animation: plate-in 520ms var(--ease-out-expo) both;
+html[data-motion="on"] [data-work-row] .work-row-arrow {
+  transition:
+    opacity 110ms var(--ease-out-expo),
+    transform 140ms var(--ease-out-expo);
 }
 
-@keyframes plate-in {
-  from {
-    opacity: 0;
-    scale: 1.015;
+html[data-motion="on"] [data-work-row]:hover .work-row-arrow,
+html[data-motion="on"] [data-work-row]:focus-within .work-row-arrow {
+  transition:
+    opacity 220ms var(--ease-out-expo),
+    transform 320ms var(--ease-out-expo);
+}
+
+/* The rule needs air. On inspection the row's contents step in from it,
+ * so the accent reads as a margin the text moved away from rather than a
+ * stroke laid over the first letter.
+ *
+ * The step is a margin pair, not a padding, because the copy is clamped to
+ * two lines: growing the left padding narrows the measure and the line
+ * breaks jump mid-animation at width-bound sizes. Reserving the same 12px
+ * on the right at rest and trading it to the left on inspection keeps the
+ * measure constant, so only the block moves — the arrow still lands on the
+ * row's right edge. Desktop only; the rule and the hairline never move. */
+@media (min-width: 64rem) {
+  [data-work-row] [data-work-row-inner] {
+    margin-right: 0.75rem;
   }
-  to {
-    opacity: 1;
-    scale: 1;
+
+  [data-work-row]:hover [data-work-row-inner],
+  [data-work-row]:focus-within [data-work-row-inner] {
+    margin-left: 0.75rem;
+    margin-right: 0;
+  }
+
+  html[data-motion="on"] [data-work-row] [data-work-row-inner] {
+    transition: margin 90ms var(--ease-in-out-quart);
+  }
+
+  html[data-motion="on"] [data-work-row]:hover [data-work-row-inner],
+  html[data-motion="on"] [data-work-row]:focus-within [data-work-row-inner] {
+    transition: margin 380ms var(--ease-out-expo);
+  }
+}
+
+/* The preview plate crossfades between visited stills. The layers stay
+ * mounted, so moving quickly across the list never blanks the panel. */
+.preview-plate [data-plate-layer] {
+  opacity: 0;
+}
+
+.preview-plate [data-plate-layer][data-active="true"] {
+  z-index: 1;
+  opacity: 1;
+}
+
+html[data-motion="on"] .preview-plate [data-plate-layer] {
+  /* The outgoing layer stays opaque while the incoming one fades in on
+   * top of it; only once that fade has finished does the outgoing layer
+   * drop. Fading both at once let the mist background through the middle
+   * of every swap, which read as a dim pulse under a fast cursor. */
+  transition: opacity 140ms var(--ease-out-quart) 280ms;
+}
+
+html[data-motion="on"] .preview-plate [data-plate-layer][data-active="true"] {
+  transition: opacity 280ms var(--ease-out-quart) 0ms;
+}
+
+/* A layer mounted for the first time also starts transparent, so the
+ * first inspection of a project dissolves like every later one. */
+@starting-style {
+  .preview-plate [data-plate-layer][data-active="true"] {
+    opacity: 0;
   }
 }
 
