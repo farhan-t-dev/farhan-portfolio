@@ -7,7 +7,6 @@ import { Stack } from "@/components/sections/stack";
 import { Work } from "@/components/sections/work";
 import { About } from "@/components/sections/about";
 import { Contact } from "@/components/sections/contact";
-import { BackToTop } from "@/components/ui/back-to-top";
 
 /**
  * Homepage — sections are server components; a few small client islands
@@ -45,7 +44,6 @@ export default function Home() {
         <div className="order-5"><Stack /></div>
         <div className="order-6"><About /></div>
         <div className="order-7"><Contact /></div>
-        <BackToTop />
       </div>
     </ViewTransition>
   );
