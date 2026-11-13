@@ -71,7 +71,7 @@ export function WorkIndex({ items, total }: WorkIndexProps) {
                   index >= 3 ? "hidden lg:block" : "",
                 )}
               >
-                <div className="grid grid-cols-[minmax(0,1fr)_6.5rem] items-start gap-x-5 py-5 md:py-6 lg:grid-cols-1 lg:gap-x-0">
+                <div className="grid grid-cols-[minmax(0,1fr)_5rem] items-start gap-x-6 py-6 md:py-6 lg:grid-cols-1 lg:gap-x-0">
                   <div className="min-w-0">
                     <div className="flex items-baseline justify-between gap-4">
                       <h3 className="text-xl font-semibold tracking-tight text-ink [overflow-wrap:anywhere]">

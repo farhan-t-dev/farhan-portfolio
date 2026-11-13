@@ -437,12 +437,13 @@ html[data-motion="on"] [data-process-step].is-revealed::before {
   content: "";
   position: absolute;
   left: 0;
-  top: 0;
-  bottom: 0;
+  top: 50%;
+  height: 55%;
   width: 2px;
   background: var(--color-signal);
   transform: scaleY(0);
-  transform-origin: top center;
+  transform-origin: center;
+  translate: 0 -50%;
   transition: transform 420ms var(--ease-out-expo);
 }
 
