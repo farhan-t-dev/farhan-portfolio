@@ -186,7 +186,12 @@ export function WorkIndex({ items, total }: WorkIndexProps) {
 
             <ul className="flex max-w-[18rem] flex-wrap justify-end gap-x-3 gap-y-1 text-xs text-slate">
               {active.project.tags.slice(0, 3).map((tag) => (
-                <li key={tag} className={cn("whitespace-nowrap")}>
+                <li
+                  key={tag}
+                  className={cn(
+                    "overflow-hidden text-ellipsis whitespace-nowrap min-w-0 max-w-full",
+                  )}
+                >
                   {tag}
                 </li>
               ))}
