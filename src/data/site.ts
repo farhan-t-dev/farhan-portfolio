@@ -21,6 +21,7 @@ export type SiteConfig = {
   /** The poster line. Shared by the hero and the social card so they cannot drift. */
   tagline: string;
   email: string;
+  bookingUrl: string;
   /** Absolute origin, e.g. "https://example.com". Social cards need it to build absolute image URLs. */
   siteUrl: string;
   /**
@@ -48,6 +49,7 @@ export const site: SiteConfig = {
     "Full-stack developer building, fixing, and shipping web applications — new features, API integrations, and deployment for founders, agencies, and teams.",
   tagline: "I build web applications, and finish the ones already started.",
   email: "farhanweb20@gmail.com",
+  bookingUrl: "https://cal.com/tan-farhan/15-min-booking",
   siteUrl: "https://frhan-portfolio.vercel.app",
   // ---------------------------------------------------------------
 

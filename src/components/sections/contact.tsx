@@ -1,11 +1,12 @@
 import { site } from "@/data/site";
 import { CopyEmail } from "@/components/motion/copy-email";
 import { LocalTime } from "@/components/motion/local-time";
+import { CalBookingLink } from "@/components/ui/cal-booking-link";
 import { Section } from "./section";
 
 /**
- * Contact — the primary CTA is a plain `mailto:` (no form, no backend),
- * with profile links alongside.
+ * Contact — email and a hosted booking link are the primary ways to get in
+ * touch, with profile links alongside.
  *
  * Every value comes from src/data/site.ts. Missing values degrade to a
  * clearly marked development placeholder rather than rendering a broken
@@ -67,6 +68,9 @@ export function Contact() {
               <div className="mt-3">
                 <CopyEmail email={site.email} />
               </div>
+            )}
+            {site.bookingUrl.trim().length > 0 && (
+              <CalBookingLink href={site.bookingUrl} />
             )}
           </div>
         </div>
