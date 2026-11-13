@@ -65,7 +65,7 @@ export type Project = {
  *
  * Featured entries come first in rank order and fill the lead tier on
  * /work: Fletched, PropManage, the marketplace migration / Parts Seekr,
- * MarketFlow, Cognabase. The migration is the strongest single piece of
+ * MarketFlow, FreelanceFlow. The migration is the strongest single piece of
  * evidence (a live system moved, database and all). That is the whole
  * point of the flag: rank orders within a tier, the flag decides the
  * tier.
@@ -202,7 +202,7 @@ export const projects: Project[] = [
     liveUrl: "https://marketflow-36gz.onrender.com",
     repoUrl: "https://github.com/farhan-t-dev/b2b-marketplace",
     featured: true,
-    rank: 5,
+    rank: 6,
   },
   {
     slug: "github-repo-finder",
@@ -236,8 +236,8 @@ export const projects: Project[] = [
     tags: ["Next.js", "N8N", "Coolify", "Supabase", "Self-hosting"],
     kind: "client",
     status: "retired",
-    featured: true,
-    rank: 6,
+    featured: false,
+    rank: 12,
   },
   {
     slug: "checkin",
@@ -265,15 +265,30 @@ export const projects: Project[] = [
   },
   {
     slug: "freelance-tracker",
-    title: "Freelance Tracker",
+    title: "FreelanceFlow",
     description:
-      "Tracks freelance clients, projects and invoices. React and TypeScript on the front end, FastAPI and SQLAlchemy on the back end.",
-    images: [{ src: "/projects/freelance-tracker.webp" }],
-    tags: ["React", "TypeScript", "FastAPI", "SQLAlchemy", "SQLite"],
+      "An invoicing workspace for solo freelancers: manage clients, projects, and invoices, then let an LLM draft overdue reminders for human approval. Invoice totals and state transitions are enforced server-side, and approved emails go through a queued, retryable outbox.",
+    images: [
+      {
+        src: "/projects/freelance-tracker.webp",
+        alt: "FreelanceFlow dashboard showing outstanding invoices, a selected invoice, receivables, and a ledger.",
+      },
+    ],
+    tags: [
+      "React",
+      "TypeScript",
+      "FastAPI",
+      "PostgreSQL",
+      "Redis",
+      "RQ",
+      "OpenRouter",
+      "Docker",
+    ],
     kind: "personal",
+    liveUrl: "https://farhan-t-dev.github.io/Freelance-Tracker/",
     repoUrl: "https://github.com/farhan-t-dev/Freelance-Tracker",
-    featured: false,
-    rank: 12,
+    featured: true,
+    rank: 5,
   },
   {
     slug: "elonmarket",
